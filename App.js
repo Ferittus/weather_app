@@ -1,16 +1,17 @@
 import React, { Component } from 'react';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
-
+import { ActivityIndicator, StyleSheet, Text, View, StatusBar  } from 'react-native';
+import Weather from './Weather';
 export default class App extends Component {
   state = {
-    isLoaded: false,
+    isLoaded: true,
   }
   render() {
     const { isLoaded } = this.state;
     return (
       <View style={styles.container}>
+        <StatusBar barStyle='light-content' hidden={true}/>
         {
-          isLoaded ? <ActivityIndicator /> : (
+          isLoaded ? <Weather /> : (
             <View style={styles.loading}>
               <Text style={styles.loadingText}>Getting the beautiful weather</Text>
             </View>
