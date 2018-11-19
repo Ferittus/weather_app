@@ -15,5 +15,9 @@
   },
   "devDependencies": {
     "babel-preset-expo": "^5.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/anpigon/weather_app.git"
   }
 }
