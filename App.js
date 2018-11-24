@@ -1,83 +1,61 @@
-import React, { Component } from 'react';
-import { ActivityIndicator, StyleSheet, Text, View, StatusBar  } from 'react-native';
+import React from 'react';
+import { StyleSheet, Text, View, Dimensions } from 'react-native';
 import Weather from './Weather';
+import { LinearGradient } from 'expo';
+
+const { width } = Dimensions.get('window');
 
 const API_KEY = '894c0c1d03546d1843b5efd334d6e479';
-export default class App extends Component {
+
+export default class App extends React.Component {
   state = {
-    isLoaded: false,
-    error: null,
-    temperature: null,
-    name: null,
+    loading: true,
+    weather: null,
+  }
+
+  render() {
+    return (
+      <LinearGradient colors={['#108dc7', '#ef8e38']} style={styles.container}>
+        { 
+          this.state.loading ? <Text style={styles.text}>Weather</Text>  : <Weather data={this.state.weather} />
+        }
+      </LinearGradient>
+    );
   }
 
   componentDidMount() {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         console.log(position);
-        this._getWeather(position.coords)
-        // this.setState({
-        //   isLoaded: true
-        // });
+        this._getWeather(position.coords); // 추가된 코드
       }, 
       (error) => {
         console.log(error);
-        this.setState({
-          error
-        })
       }
     );
   }
 
-  _getWeather({latitude, longitude}) {
+  _getWeather = ({latitude, longitude}) => {
     fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${API_KEY}`)
-    .then(response => response.json())
+    .then(response => response.json()) // 응답값을 json으로 변환
     .then(json => {
-      console.log(json)
-
+      // console.log(json);
       this.setState({
-        temperature: json.main.temp,
-        name:json.weather[0].main,
-        isLoaded: true
+        weather: json,
+        loading: false
       })
     });
-  }
-
-  render() {
-    const { isLoaded, error } = this.state;
-    return (
-      <View style={styles.container}>
-        <StatusBar barStyle='light-content' hidden={true}/>
-        {
-          isLoaded ? <Weather name={this.state.name} temp={this.state.temperature}/> : (
-            <View style={styles.loading}>
-              <Text style={styles.loadingText}>Getting the beautiful weather</Text>
-              { error ? <Text style={styles.errorText}>{error}</Text> : null }
-            </View>
-          )
-        }
-      </View>
-    );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  errorText: {
-    color: 'red',
-    backgroundColor: 'transparent'
-  },
-  loading: {
-    flex:1,
-    backgroundColor: '#fdf6aa',
-    justifyContent: 'flex-end',
-    paddingLeft: 25,
-  },
-  loadingText: {
-    fontSize:38,
-    marginBottom: 93,
+  text: {
+    fontSize:50,
+    color: 'white'
   }
 });
